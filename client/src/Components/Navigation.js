@@ -8,7 +8,7 @@ const Navigation = () => {
 	const [value, setValue] = useState(0);
 
 	useEffect(() => {
-		const paths = ["/", "/report"];
+		const paths = ["/", "/report", "/map"];
 		setValue(
 			paths.indexOf(location.pathname.toLowerCase()) >= 0
 				? paths.indexOf(location.pathname.toLowerCase())
@@ -29,9 +29,8 @@ const Navigation = () => {
 			}}
 		>
 			<AppBar
-				style={{ backgroundColor: "white", color: "black" }}
+				style={{ backgroundColor: "lightgrey", color: "black" }}
 				sx={{
-					backgroundColor: "white",
 					minHeight: "10vh",
 					display: "flex",
 					flexDirection: "column",
@@ -53,8 +52,9 @@ const Navigation = () => {
 								onChange={(e, v) => setValue(v)}
 								value={value}
 							>
-								<Tab label={"Landing"} component={Link} to="/" />
+								<Tab label={"Home"} component={Link} to="/" />
 								<Tab label={"Report an Issue"} component={Link} to="/report" />
+								<Tab label={"Map"} component={Link} to="/map" />
 							</Tabs>
 						</Grid>
 					</Grid>

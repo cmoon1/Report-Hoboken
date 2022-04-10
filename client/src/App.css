@@ -14,8 +14,15 @@
 }
 
 .map-container {
-	width: 100%;
+	width: 50%;
 	height: 100vh;
+	background-color: darkcyan;
+}
+
+.issue-container {
+	/* text-align: center;
+	justify-content: center; */
+	margin: auto;
 }
 
 .App-header {

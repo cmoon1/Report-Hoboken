@@ -15,6 +15,7 @@ function MapComponent() {
 	const [totalPages, setTotalPages] = useState(3);
 	const [activeMarker, setActiveMarker] = useState(null);
 	const [selectedIndex, setSelectedIndex] = useState(null);
+	// sample data for now
 	const [issuesData, setIssuesData] = useState([
 		{
 			title: "Water issue",
@@ -67,7 +68,7 @@ function MapComponent() {
 		{
 			title: "Power issue",
 			location: "Reported at 1000 Ave",
-			coords: { lat: 40.746, lng: -74.028 },
+			coords: { lat: 40.75, lng: -74.028 },
 			name: "Billy Jones",
 		},
 	]);
@@ -125,7 +126,7 @@ function MapComponent() {
 	issuesList =
 		issuesData &&
 		issuesData
-			.slice((currentPage - 1) * 5, currentPage * 5)
+			.slice((currentPage - 1) * 3, currentPage * 3)
 			.map((issue, index) => {
 				return buildCards(issue, index);
 			});
@@ -139,7 +140,7 @@ function MapComponent() {
 			>
 				{issuesData &&
 					issuesData
-						.slice((currentPage - 1) * 5, currentPage * 5)
+						.slice((currentPage - 1) * 3, currentPage * 3)
 						.map((issue, index) => {
 							return (
 								<div key={index}>

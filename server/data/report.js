@@ -3,14 +3,9 @@ const reports = mongoCollections.reports;
 const NodeGeocoder = require('node-geocoder');
 require('dotenv').config();
 
-// const options = {
-//     provider: 'google',
-//     apiKey: process.env.PUBLIC_GOOGLE_MAPS_API_KEY,
-// };
-
 const options = {
     provider: 'google',
-    apiKey: "AIzaSyAhZeQMjAh8mqi1L-PLzhQhAZpWrITuWO0"
+    apiKey: process.env.PUBLIC_GOOGLE_MAPS_API_KEY,
 };
 
 const geocoder = NodeGeocoder(options);

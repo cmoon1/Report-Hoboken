@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import {
 	Container,
 	Typography,
@@ -15,14 +15,32 @@ import {
 	IconButton,
 	Collapse,
 	Alert,
+	Autocomplete,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import throttle from "lodash/throttle";
+import parse from "autosuggest-highlight/parse";
+
+function loadScript(src, position, id) {
+	if (!position) {
+		return;
+	}
+
+	const script = document.createElement("script");
+	script.setAttribute("async", "");
+	script.setAttribute("id", id);
+	script.src = src;
+	position.appendChild(script);
+}
+
+const autocompleteService = { current: null };
+
 function ReportForm() {
 	const [loading, setLoading] = useState(false);
 	const [formData, setFormData] = useState({
 		name: "",
 		email: "",
-		address: "",
 		issue: "",
 		confirm: false,
 	});
@@ -36,6 +54,68 @@ function ReportForm() {
 	const [issueErrorMessage, setIssueErrorMessage] = useState(" ");
 	const [error, setError] = useState(false);
 	const [status, setStatus] = useState(false);
+
+	const [value, setValue] = useState(null);
+	const [inputValue, setInputValue] = useState("");
+	const [options, setOptions] = useState([]);
+	const loaded = useRef(false);
+
+	if (typeof window !== "undefined" && !loaded.current) {
+		if (!document.querySelector("#google-maps")) {
+			loadScript(
+				`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`,
+				document.querySelector("head"),
+				"google-maps"
+			);
+		}
+
+		loaded.current = true;
+	}
+
+	const fetch = useMemo(
+		() =>
+			throttle((request, callback) => {
+				autocompleteService.current.getPlacePredictions(request, callback);
+			}, 200),
+		[]
+	);
+
+	useEffect(() => {
+		let active = true;
+
+		if (!autocompleteService.current && window.google) {
+			autocompleteService.current =
+				new window.google.maps.places.AutocompleteService();
+		}
+		if (!autocompleteService.current) {
+			return undefined;
+		}
+
+		if (inputValue === "") {
+			setOptions(value ? [value] : []);
+			return undefined;
+		}
+
+		fetch({ input: inputValue }, (results) => {
+			if (active) {
+				let newOptions = [];
+
+				if (value) {
+					newOptions = [value];
+				}
+
+				if (results) {
+					newOptions = [...newOptions, ...results];
+				}
+
+				setOptions(newOptions);
+			}
+		});
+
+		return () => {
+			active = false;
+		};
+	}, [value, inputValue, fetch]);
 
 	const handleChange = (e) => {
 		setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -74,7 +154,7 @@ function ReportForm() {
 		setEmailError(false);
 		setEmailErrorMessage(" ");
 
-		if (!formData.address || !formData.address.trim()) {
+		if (!inputValue || !inputValue.trim()) {
 			setAddressError(true);
 			setAddressErrorMessage("Address must be provided");
 			setLoading(false);
@@ -82,6 +162,23 @@ function ReportForm() {
 		}
 		setAddressError(false);
 		setAddressErrorMessage(" ");
+
+		let hobPattern = /Hoboken/;
+		if (
+			value &&
+			value.structured_formatting &&
+			value.structured_formatting.secondary_text &&
+			!hobPattern.test(value.structured_formatting.secondary_text)
+		) {
+			setAddressError(true);
+			setAddressErrorMessage("Address must be in Hoboken, NJ");
+			setLoading(false);
+			return;
+		}
+		setAddressError(false);
+		setAddressErrorMessage(" ");
+		console.log(value);
+		console.log(inputValue);
 
 		if (!formData.issue || !formData.issue.trim()) {
 			setIssueError(true);
@@ -183,15 +280,76 @@ function ReportForm() {
 						/>
 					</Grid>
 					<Grid item xs={12}>
-						<TextField
-							name="address"
-							required
-							fullWidth
-							id="address"
-							label="Address"
-							error={!!addressError}
-							helperText={addressErrorMessage}
-							onChange={(e) => handleChange(e)}
+						<Autocomplete
+							id="google-map"
+							getOptionLabel={(option) =>
+								typeof option === "string" ? option : option.description
+							}
+							filterOptions={(x) => x}
+							options={options}
+							autoComplete
+							includeInputInList
+							filterSelectedOptions
+							value={value}
+							onChange={(event, newValue) => {
+								setOptions(newValue ? [newValue, ...options] : options);
+								setValue(newValue);
+							}}
+							onInputChange={(event, newInputValue) => {
+								setInputValue(newInputValue);
+							}}
+							renderInput={(params) => (
+								<TextField
+									{...params}
+									name="address"
+									required
+									fullWidth
+									id="address"
+									label="Address"
+									error={!!addressError}
+									helperText={addressErrorMessage}
+								/>
+							)}
+							renderOption={(props, option) => {
+								const matches =
+									option.structured_formatting.main_text_matched_substrings;
+								const parts = parse(
+									option.structured_formatting.main_text,
+									matches.map((match) => [
+										match.offset,
+										match.offset + match.length,
+									])
+								);
+
+								return (
+									<li {...props}>
+										<Grid container alignItems="center">
+											<Grid item>
+												<Box
+													component={LocationOnIcon}
+													sx={{ color: "text.secondary", mr: 2 }}
+												/>
+											</Grid>
+											<Grid item xs>
+												{parts.map((part, index) => (
+													<span
+														key={index}
+														style={{
+															fontWeight: part.highlight ? 700 : 400,
+														}}
+													>
+														{part.text}
+													</span>
+												))}
+
+												<Typography variant="body2" color="text.secondary">
+													{option.structured_formatting.secondary_text}
+												</Typography>
+											</Grid>
+										</Grid>
+									</li>
+								);
+							}}
 						/>
 					</Grid>
 					<Grid item xs={12}>

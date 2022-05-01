@@ -55,6 +55,7 @@ function ReportForm() {
 	const [error, setError] = useState(false);
 	const [status, setStatus] = useState(false);
 
+	// Autocomplete states
 	const [value, setValue] = useState(null);
 	const [inputValue, setInputValue] = useState("");
 	const [options, setOptions] = useState([]);

@@ -21,7 +21,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import throttle from "lodash/throttle";
 import parse from "autosuggest-highlight/parse";
-
+import axios from "axios";
 function loadScript(src, position, id) {
 	if (!position) {
 		return;
@@ -41,7 +41,14 @@ function ReportForm() {
 	const [formData, setFormData] = useState({
 		name: "",
 		email: "",
-		issue: "",
+		issueType: "",
+		address: "",
+		date: new Date().toLocaleDateString("en-US", {
+			year: "numeric",
+			month: "2-digit",
+			day: "2-digit",
+		}),
+		description: "",
 		confirm: false,
 	});
 	const [nameError, setNameError] = useState(false);
@@ -52,6 +59,8 @@ function ReportForm() {
 	const [addressErrorMessage, setAddressErrorMessage] = useState(" ");
 	const [issueError, setIssueError] = useState(false);
 	const [issueErrorMessage, setIssueErrorMessage] = useState(" ");
+	const [descriptionError, setDescriptionError] = useState(false);
+	const [descriptionErrorMessage, setDescriptionErrorMessage] = useState(" ");
 	const [error, setError] = useState(false);
 	const [status, setStatus] = useState(false);
 
@@ -178,29 +187,49 @@ function ReportForm() {
 		}
 		setAddressError(false);
 		setAddressErrorMessage(" ");
-		console.log(value);
-		console.log(inputValue);
-
-		if (!formData.issue || !formData.issue.trim()) {
+		// console.log(value);
+		// console.log(inputValue);
+		if (!formData.issueType || !formData.issueType.trim()) {
 			setIssueError(true);
-			setIssueErrorMessage(
-				"You must select at least one of the issues provided."
-			);
+			setIssueErrorMessage("You must select one of the issues provided.");
 			setLoading(false);
 			return;
 		}
 		setIssueError(false);
 		setIssueErrorMessage(" ");
 
+		if (!formData.description || !formData.description.trim()) {
+			setDescriptionError(true);
+			setDescriptionErrorMessage("Description must be provided");
+			setLoading(false);
+			return;
+		}
+		setDescriptionError(false);
+		setDescriptionErrorMessage(" ");
+
 		try {
+			// let fData = new FormData();
+			// fData.append("address", inputValue);
+			console.log(inputValue);
+			setFormData((prev) => ({ ...prev, address: inputValue }));
+			console.log(formData);
+			// const { data } = await axios.post("/report", formData);
+			const { data } = await axios({
+				method: "POST",
+				url: "/report",
+				data: {
+					formData: formData,
+					address: inputValue,
+				},
+			});
 			setStatus(true);
 			setLoading(false);
 		} catch (error) {
+			console.log(error);
 			setError(true);
 			setLoading(false);
 		}
 	};
-
 	return (
 		<Container component="main" maxWidth="xs">
 			{status ? (
@@ -292,12 +321,16 @@ function ReportForm() {
 							includeInputInList
 							filterSelectedOptions
 							value={value}
-							onChange={(event, newValue) => {
+							onChange={(e, newValue) => {
 								setOptions(newValue ? [newValue, ...options] : options);
 								setValue(newValue);
 							}}
-							onInputChange={(event, newInputValue) => {
+							onInputChange={(e, newInputValue) => {
 								setInputValue(newInputValue);
+								// setFormData((prev) => ({
+								// 	...prev,
+								// 	[e.target.name]: e.target.value,
+								// }));
 							}}
 							renderInput={(params) => (
 								<TextField
@@ -361,8 +394,8 @@ function ReportForm() {
 							</FormLabel>
 							<RadioGroup
 								row
-								name="issue"
-								aria-label="issue"
+								name="issueType"
+								aria-label="issueType"
 								onChange={(e) => handleChange(e)}
 							>
 								<FormControlLabel
@@ -400,6 +433,20 @@ function ReportForm() {
 								{issueErrorMessage}
 							</FormHelperText>
 						</FormControl>
+					</Grid>
+					<Grid item xs={12}>
+						<TextField
+							name="description"
+							required
+							fullWidth
+							id="description"
+							label="Description of the Issue"
+							error={!!descriptionError}
+							helperText={descriptionErrorMessage}
+							onChange={(e) => handleChange(e)}
+							multiline
+							rows={4}
+						/>
 					</Grid>
 
 					<Grid item xs={12}>

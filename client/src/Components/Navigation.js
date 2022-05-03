@@ -20,7 +20,7 @@ const Navigation = () => {
 		<div
 			sx={{
 				backgroundColor: "white",
-				minHeight: "10vh",
+				minHeight: "9vh",
 				display: "flex",
 				flexDirection: "column",
 				justifyContent: "center",
@@ -31,7 +31,7 @@ const Navigation = () => {
 			<AppBar
 				style={{ backgroundColor: "lightgrey", color: "black" }}
 				sx={{
-					minHeight: "10vh",
+					minHeight: "9vh",
 					display: "flex",
 					flexDirection: "column",
 					justifyContent: "center",
@@ -51,6 +51,8 @@ const Navigation = () => {
 								aria-label="Navigation Tabs"
 								onChange={(e, v) => setValue(v)}
 								value={value}
+								TabIndicatorProps={{ style: { color: "green" } }}
+								textColor={"inherit"}
 							>
 								<Tab label={"Home"} component={Link} to="/" />
 								<Tab label={"Report an Issue"} component={Link} to="/report" />

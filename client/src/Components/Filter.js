@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 const Filter = (props) => {
 	const handleChange = (event) => {
@@ -12,11 +12,11 @@ const Filter = (props) => {
 				labelId="filter-label"
 				id="filter-select"
 				value={props.filteredIssue}
-				label="Issue"
 				onChange={handleChange}
 			>
+				<MenuItem value="">None</MenuItem>
 				<MenuItem value="flooding">Flooding</MenuItem>
-				<MenuItem value="power">Power</MenuItem>
+				<MenuItem value="nopower">Power</MenuItem>
 			</Select>
 		</FormControl>
 	);

@@ -70,7 +70,11 @@ function ReportForm() {
 	const [options, setOptions] = useState([]);
 	const loaded = useRef(false);
 
-	if (typeof window !== "undefined" && !loaded.current) {
+	if (
+		typeof window !== "undefined" &&
+		typeof window.google !== "object" &&
+		!loaded.current
+	) {
 		if (!document.querySelector("#google-maps")) {
 			loadScript(
 				`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`,
@@ -99,6 +103,8 @@ function ReportForm() {
 		}
 		if (!autocompleteService.current) {
 			return undefined;
+			// autocompleteService.current =
+			// 	new window.google.maps.places.AutocompleteService();
 		}
 
 		if (inputValue === "") {
@@ -208,12 +214,6 @@ function ReportForm() {
 		setDescriptionErrorMessage(" ");
 
 		try {
-			// let fData = new FormData();
-			// fData.append("address", inputValue);
-			console.log(inputValue);
-			setFormData((prev) => ({ ...prev, address: inputValue }));
-			console.log(formData);
-			// const { data } = await axios.post("/report", formData);
 			const { data } = await axios({
 				method: "POST",
 				url: "/report",
@@ -222,6 +222,9 @@ function ReportForm() {
 					address: inputValue,
 				},
 			});
+			if (!data) {
+				throw new Error("Could not make report");
+			}
 			setStatus(true);
 			setLoading(false);
 		} catch (error) {
@@ -295,6 +298,7 @@ function ReportForm() {
 							error={!!nameError}
 							helperText={nameErrorMessage}
 							onChange={(e) => handleChange(e)}
+							variant="standard"
 						/>
 					</Grid>
 					<Grid item xs={12}>
@@ -307,6 +311,7 @@ function ReportForm() {
 							error={!!emailError}
 							helperText={emailErrorMessage}
 							onChange={(e) => handleChange(e)}
+							variant="standard"
 						/>
 					</Grid>
 					<Grid item xs={12}>
@@ -342,6 +347,7 @@ function ReportForm() {
 									label="Address"
 									error={!!addressError}
 									helperText={addressErrorMessage}
+									variant="standard"
 								/>
 							)}
 							renderOption={(props, option) => {
@@ -445,7 +451,8 @@ function ReportForm() {
 							helperText={descriptionErrorMessage}
 							onChange={(e) => handleChange(e)}
 							multiline
-							rows={4}
+							rows={2}
+							variant="standard"
 						/>
 					</Grid>
 

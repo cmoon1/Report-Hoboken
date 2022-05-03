@@ -94,7 +94,31 @@ let getAll = async () => {
 	return reportArr;
 };
 
+let getFilteredIssues = async (issueType) => {
+	if (!issueType) {
+		throw "Issue type not provided";
+	}
+	if (typeof issueType !== "string") {
+		throw "Issue type not of type string";
+	}
+	issueType = issueType.trim();
+	if (!issueType) {
+		throw "Issue type is empty";
+	}
+
+	const reportCollection = await reports();
+	const reportArr = await reportCollection
+		.find({ issueType: issueType })
+		.toArray();
+
+	if (!reportArr) {
+		throw "Could not find issues of that type";
+	}
+	return reportArr;
+};
+
 module.exports = {
 	createReport,
 	getAll,
+	getFilteredIssues,
 };

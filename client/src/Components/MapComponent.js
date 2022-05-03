@@ -20,8 +20,10 @@ function MapComponent() {
 	const [selectedIndex, setSelectedIndex] = useState(null);
 	const [filterIssue, setFilterIssue] = useState("");
 	const [issuesData, setIssuesData] = useState(undefined);
+	const [filteredIssues, setFilteredIssues] = useState(undefined);
 	const [loading, setLoading] = useState(false);
 	let issuesList = [];
+	let markerList = [];
 
 	useEffect(() => {
 		async function fetchData() {
@@ -30,21 +32,49 @@ function MapComponent() {
 				const { data } = await axios.get("/report");
 				setIssuesData(data);
 				console.log(data);
-				let pages = Math.floor(Number(data.length) / 3);
+				let pages = Math.floor(Number(data.length) / 3) + 1;
 				setTotalPages(pages === 0 ? 1 : pages);
 
 				setLoading(false);
-			} catch (e) {}
+			} catch (e) {
+				console.log(e);
+			}
 		}
 		fetchData();
 	}, []);
 
 	useEffect(() => {
-		function filterResults() {}
-		if (filterIssue) {
-			filterResults();
+		async function fetchData() {
+			try {
+				setLoading(true);
+				// const { data } = await axios({
+				// 	method: "POST",
+				// 	url: "/report/filter",
+				// 	data: {
+				// 		issueType: filterIssue,
+				// 	},
+				// });
+				let data = issuesData.filter((x) => x.issueType === filterIssue);
+				console.log(issuesData.filter((x) => x.issueType === filterIssue));
+				// setFilteredIssues(
+				// 	issuesData.filter((x) => x.issueType === filterIssue)
+				// );
+				setFilteredIssues(data);
+				// console.log(data);
+				let pages = Math.floor(Number(data.length) / 3) + 1;
+				// let pages = 2;
+				console.log(pages);
+				setTotalPages(pages === 0 ? 1 : pages);
+
+				setLoading(false);
+			} catch (e) {
+				console.log(e);
+			}
 		}
-	}, [filterIssue]);
+		if (filterIssue) {
+			fetchData();
+		}
+	}, [filterIssue, issuesData]);
 
 	const handleListItemClick = (event, index) => {
 		setSelectedIndex(index);
@@ -99,16 +129,111 @@ function MapComponent() {
 		setFilterIssue(value);
 	};
 
-	issuesList =
-		issuesData &&
-		issuesData
-			.slice((currentPage - 1) * 3, currentPage * 3)
-			.map((issue, index) => {
-				return buildCards(issue, index);
-			});
+	if (filterIssue) {
+		issuesList =
+			filteredIssues &&
+			filteredIssues
+				.slice((currentPage - 1) * 3, currentPage * 3)
+				.map((issue, index) => {
+					return buildCards(issue, index);
+				});
+		markerList =
+			filteredIssues &&
+			filteredIssues
+				.slice((currentPage - 1) * 3, currentPage * 3)
+				.map((issue, index) => {
+					return (
+						<div key={index}>
+							<Marker
+								title={issue.description}
+								position={{
+									lat: issue.latitude,
+									lng: issue.longitude,
+								}}
+								onClick={() => handleToggleOpen(index)}
+								animation={window.google.maps.Animation.DROP}
+							/>
+							{activeMarker === index ? (
+								<InfoWindow
+									key={index + issue.description}
+									onCloseClick={handleToggleClose}
+									position={{
+										lat: issue.latitude,
+										lng: issue.longitude,
+									}}
+								>
+									<div>
+										<h2>{issue.description}</h2>
+										<br />
+										<p>{issue.issueType}</p>
+									</div>
+								</InfoWindow>
+							) : null}
+						</div>
+					);
+				});
+	} else {
+		issuesList =
+			issuesData &&
+			issuesData
+				.slice((currentPage - 1) * 3, currentPage * 3)
+				.map((issue, index) => {
+					return buildCards(issue, index);
+				});
+		markerList =
+			issuesData &&
+			issuesData
+				.slice((currentPage - 1) * 3, currentPage * 3)
+				.map((issue, index) => {
+					return (
+						<div key={index}>
+							<Marker
+								title={issue.description}
+								position={{
+									lat: issue.latitude,
+									lng: issue.longitude,
+								}}
+								onClick={() => handleToggleOpen(index)}
+								animation={window.google.maps.Animation.DROP}
+							/>
+							{activeMarker === index ? (
+								<InfoWindow
+									key={index + issue.description}
+									onCloseClick={handleToggleClose}
+									position={{
+										lat: issue.latitude,
+										lng: issue.longitude,
+									}}
+								>
+									<div>
+										<h2>{issue.description}</h2>
+										<br />
+										<p>{issue.issueType}</p>
+									</div>
+								</InfoWindow>
+							) : null}
+						</div>
+					);
+				});
+	}
 
 	return (
-		<div>
+		<div style={{ margin: "auto" }}>
+			{/* <h3 style={{ textAlign: "center", justifyContent: "center" }}>
+				Current Issues
+			</h3> */}
+			<Typography
+				style={{
+					textAlign: "center",
+					justifyContent: "center",
+					paddingTop: "10px",
+					height: "70px",
+				}}
+				variant="h4"
+				component="h1"
+			>
+				Current Issues
+			</Typography>
 			{loading ? (
 				<CircularProgress />
 			) : (
@@ -118,60 +243,37 @@ function MapComponent() {
 						center={center}
 						mapContainerClassName="map-container"
 					>
-						{issuesData &&
-							issuesData
-								.slice((currentPage - 1) * 3, currentPage * 3)
-								.map((issue, index) => {
-									return (
-										<div key={index}>
-											<Marker
-												title={issue.description}
-												position={{
-													lat: issue.latitude,
-													lng: issue.longitude,
-												}}
-												onClick={() => handleToggleOpen(index)}
-												animation={window.google.maps.Animation.DROP}
-											/>
-											{activeMarker === index ? (
-												<InfoWindow
-													key={index + issue.description}
-													onCloseClick={handleToggleClose}
-													position={{
-														lat: issue.latitude,
-														lng: issue.longitude,
-													}}
-												>
-													<div>
-														<h2>{issue.description}</h2>
-														<br />
-														<p>{issue.issueType}</p>
-													</div>
-												</InfoWindow>
-											) : null}
-										</div>
-									);
-								})}
+						{markerList}
 					</GoogleMap>
 					<div className="issue-container">
-						<h1 style={{ textAlign: "center", justifyContent: "center" }}>
-							Current Issues
-						</h1>
-						<Filter setFilter={setFilter} filteredIssue={filterIssue} />
-						<List sx={{ width: "100%", bgcolor: "background.paper" }}>
-							<Divider variant="insert" component="li" />
-							{issuesList}
-						</List>
-						<Pagination
-							count={totalPages}
-							page={currentPage}
-							onChange={handlePageChange}
-							defaultPage={1}
-							color="primary"
-							size="large"
-							showFirstButton
-							showLastButton
+						<Filter
+							className="filter-select"
+							setFilter={setFilter}
+							filteredIssue={filterIssue}
 						/>
+						<div className="issue-list">
+							<List sx={{ width: "100%", bgcolor: "background.paper" }}>
+								<Divider variant="insert" component="li" />
+								{issuesList && issuesList.length > 0 ? (
+									issuesList
+								) : (
+									<div>No events have been reported</div>
+								)}
+								{/* {issuesList} */}
+							</List>
+						</div>
+						<div className="pagination-controls">
+							<Pagination
+								count={totalPages}
+								page={currentPage}
+								onChange={handlePageChange}
+								defaultPage={1}
+								color="primary"
+								size="large"
+								showFirstButton
+								showLastButton
+							/>
+						</div>
 					</div>
 				</div>
 			)}

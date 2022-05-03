@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 const Filter = (props) => {
 	const handleChange = (event) => {
@@ -6,17 +6,22 @@ const Filter = (props) => {
 	};
 
 	return (
-		<FormControl fullWidth>
-			<InputLabel id="filter-label">Issues</InputLabel>
+		<FormControl fullWidth variant="standard">
+			<InputLabel id="filter-label">Filter by Type of Issue</InputLabel>
 			<Select
 				labelId="filter-label"
 				id="filter-select"
 				value={props.filteredIssue}
-				label="Issue"
 				onChange={handleChange}
 			>
+				<MenuItem value="">None</MenuItem>
+				<MenuItem value="nowater">No Water</MenuItem>
+				<MenuItem value="nopower">Power Outage</MenuItem>
 				<MenuItem value="flooding">Flooding</MenuItem>
-				<MenuItem value="power">Power</MenuItem>
+				<MenuItem value="construction">Construction</MenuItem>
+				<MenuItem value="noise">Loud Noise</MenuItem>
+				<MenuItem value="airquality">Bad Air Quality</MenuItem>
+				<MenuItem value="potholes">Potholes</MenuItem>
 			</Select>
 		</FormControl>
 	);

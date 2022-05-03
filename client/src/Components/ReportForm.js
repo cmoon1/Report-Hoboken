@@ -8,14 +8,13 @@ import {
 	Button,
 	FormControl,
 	FormLabel,
-	RadioGroup,
-	FormControlLabel,
 	FormHelperText,
-	Radio,
 	IconButton,
 	Collapse,
 	Alert,
 	Autocomplete,
+	Select,
+	MenuItem,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
@@ -41,7 +40,7 @@ function ReportForm() {
 	const [formData, setFormData] = useState({
 		name: "",
 		email: "",
-		issueType: "",
+		issueType: "nowater",
 		address: "",
 		date: new Date().toLocaleDateString("en-US", {
 			year: "numeric",
@@ -70,7 +69,11 @@ function ReportForm() {
 	const [options, setOptions] = useState([]);
 	const loaded = useRef(false);
 
-	if (typeof window !== "undefined" && !loaded.current) {
+	if (
+		typeof window !== "undefined" &&
+		typeof window.google !== "object" &&
+		!loaded.current
+	) {
 		if (!document.querySelector("#google-maps")) {
 			loadScript(
 				`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`,
@@ -99,6 +102,8 @@ function ReportForm() {
 		}
 		if (!autocompleteService.current) {
 			return undefined;
+			// autocompleteService.current =
+			// 	new window.google.maps.places.AutocompleteService();
 		}
 
 		if (inputValue === "") {
@@ -208,12 +213,6 @@ function ReportForm() {
 		setDescriptionErrorMessage(" ");
 
 		try {
-			// let fData = new FormData();
-			// fData.append("address", inputValue);
-			console.log(inputValue);
-			setFormData((prev) => ({ ...prev, address: inputValue }));
-			console.log(formData);
-			// const { data } = await axios.post("/report", formData);
 			const { data } = await axios({
 				method: "POST",
 				url: "/report",
@@ -222,6 +221,9 @@ function ReportForm() {
 					address: inputValue,
 				},
 			});
+			if (!data) {
+				throw new Error("Could not make report");
+			}
 			setStatus(true);
 			setLoading(false);
 		} catch (error) {
@@ -295,6 +297,7 @@ function ReportForm() {
 							error={!!nameError}
 							helperText={nameErrorMessage}
 							onChange={(e) => handleChange(e)}
+							variant="standard"
 						/>
 					</Grid>
 					<Grid item xs={12}>
@@ -307,6 +310,7 @@ function ReportForm() {
 							error={!!emailError}
 							helperText={emailErrorMessage}
 							onChange={(e) => handleChange(e)}
+							variant="standard"
 						/>
 					</Grid>
 					<Grid item xs={12}>
@@ -342,6 +346,7 @@ function ReportForm() {
 									label="Address"
 									error={!!addressError}
 									helperText={addressErrorMessage}
+									variant="standard"
 								/>
 							)}
 							renderOption={(props, option) => {
@@ -392,43 +397,20 @@ function ReportForm() {
 								Which of the following describes the issue you are currently
 								having?
 							</FormLabel>
-							<RadioGroup
-								row
+							<Select
+								id="select-label"
 								name="issueType"
-								aria-label="issueType"
+								value={formData.issueType}
 								onChange={(e) => handleChange(e)}
 							>
-								<FormControlLabel
-									control={<Radio />}
-									label="No Water"
-									value="nowater"
-								/>
-								<FormControlLabel
-									control={<Radio />}
-									label="No Power"
-									value="nopower"
-								/>
-								<FormControlLabel
-									control={<Radio />}
-									label="Flooding"
-									value="flooding"
-								/>
-								<FormControlLabel
-									control={<Radio />}
-									label="Water Leak"
-									value="waterleak"
-								/>
-								<FormControlLabel
-									control={<Radio />}
-									label="Noise"
-									value="noise"
-								/>
-								<FormControlLabel
-									control={<Radio />}
-									label="Air Quality"
-									value="airquality"
-								/>
-							</RadioGroup>
+								<MenuItem value="nowater">No Water</MenuItem>
+								<MenuItem value="nopower">Power Outage</MenuItem>
+								<MenuItem value="flooding">Flooding</MenuItem>
+								<MenuItem value="construction">Construction</MenuItem>
+								<MenuItem value="noise">Loud Noise</MenuItem>
+								<MenuItem value="airquality">Bad Air Quality</MenuItem>
+								<MenuItem value="potholes">Potholes</MenuItem>
+							</Select>
 							<FormHelperText sx={{ fontWeight: "bold", fontSize: 14 }}>
 								{issueErrorMessage}
 							</FormHelperText>
@@ -440,12 +422,13 @@ function ReportForm() {
 							required
 							fullWidth
 							id="description"
-							label="Description of the Issue"
+							label="Please Provide a Description of the Issue"
 							error={!!descriptionError}
 							helperText={descriptionErrorMessage}
 							onChange={(e) => handleChange(e)}
 							multiline
-							rows={4}
+							rows={2}
+							variant="standard"
 						/>
 					</Grid>
 

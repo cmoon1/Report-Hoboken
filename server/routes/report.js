@@ -12,6 +12,20 @@ router.get("/", async (req, res) => {
 	}
 });
 
+router.post("/filter", async (req, res) => {
+	let issueInfo = req.body;
+	if (!issueInfo.issueType) {
+		res.status(400).json({ error: "Issue type needs to be provided" });
+		return;
+	}
+	try {
+		let reportArr = await reportData.getFilteredIssues(issueInfo.issueType);
+		res.status(200).json(reportArr);
+	} catch (e) {
+		res.status(404).json(e);
+	}
+});
+
 router.post("/", async (req, res) => {
 	let reportInfo = req.body;
 	console.log(reportInfo);

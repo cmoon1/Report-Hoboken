@@ -22,7 +22,25 @@
 .issue-container {
 	/* text-align: center;
 	justify-content: center; */
-	margin: auto;
+	/* margin: auto; */
+	/* margin-top: 100px; */
+	width: 45%;
+	padding-left: 50px;
+}
+
+.issue-list {
+	text-align: center;
+	justify-content: center;
+}
+
+/* .pagination-controls {
+	position: fixed;
+	width: 45%;
+	margin-top: 150px;
+} */
+
+.filter-select {
+	width: 50%;
 }
 
 .App-header {

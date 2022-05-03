@@ -14,7 +14,6 @@ router.get("/", async (req, res) => {
 
 router.post("/filter", async (req, res) => {
 	let issueInfo = req.body;
-	console.log(issueInfo);
 	if (!issueInfo.issueType) {
 		res.status(400).json({ error: "Issue type needs to be provided" });
 		return;

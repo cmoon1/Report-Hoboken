@@ -8,14 +8,13 @@ import {
 	Button,
 	FormControl,
 	FormLabel,
-	RadioGroup,
-	FormControlLabel,
 	FormHelperText,
-	Radio,
 	IconButton,
 	Collapse,
 	Alert,
 	Autocomplete,
+	Select,
+	MenuItem,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
@@ -41,7 +40,7 @@ function ReportForm() {
 	const [formData, setFormData] = useState({
 		name: "",
 		email: "",
-		issueType: "",
+		issueType: "nowater",
 		address: "",
 		date: new Date().toLocaleDateString("en-US", {
 			year: "numeric",
@@ -398,43 +397,20 @@ function ReportForm() {
 								Which of the following describes the issue you are currently
 								having?
 							</FormLabel>
-							<RadioGroup
-								row
+							<Select
+								id="select-label"
 								name="issueType"
-								aria-label="issueType"
+								value={formData.issueType}
 								onChange={(e) => handleChange(e)}
 							>
-								<FormControlLabel
-									control={<Radio />}
-									label="No Water"
-									value="nowater"
-								/>
-								<FormControlLabel
-									control={<Radio />}
-									label="No Power"
-									value="nopower"
-								/>
-								<FormControlLabel
-									control={<Radio />}
-									label="Flooding"
-									value="flooding"
-								/>
-								<FormControlLabel
-									control={<Radio />}
-									label="Water Leak"
-									value="waterleak"
-								/>
-								<FormControlLabel
-									control={<Radio />}
-									label="Noise"
-									value="noise"
-								/>
-								<FormControlLabel
-									control={<Radio />}
-									label="Air Quality"
-									value="airquality"
-								/>
-							</RadioGroup>
+								<MenuItem value="nowater">No Water</MenuItem>
+								<MenuItem value="nopower">Power Outage</MenuItem>
+								<MenuItem value="flooding">Flooding</MenuItem>
+								<MenuItem value="construction">Construction</MenuItem>
+								<MenuItem value="noise">Loud Noise</MenuItem>
+								<MenuItem value="airquality">Bad Air Quality</MenuItem>
+								<MenuItem value="potholes">Potholes</MenuItem>
+							</Select>
 							<FormHelperText sx={{ fontWeight: "bold", fontSize: 14 }}>
 								{issueErrorMessage}
 							</FormHelperText>
@@ -446,7 +422,7 @@ function ReportForm() {
 							required
 							fullWidth
 							id="description"
-							label="Description of the Issue"
+							label="Please Provide a Description of the Issue"
 							error={!!descriptionError}
 							helperText={descriptionErrorMessage}
 							onChange={(e) => handleChange(e)}

@@ -47,16 +47,22 @@ function MapComponent() {
 		async function fetchData() {
 			try {
 				setLoading(true);
-				const { data } = await axios({
-					method: "POST",
-					url: "/report/filter",
-					data: {
-						issueType: filterIssue,
-					},
-				});
+				// const { data } = await axios({
+				// 	method: "POST",
+				// 	url: "/report/filter",
+				// 	data: {
+				// 		issueType: filterIssue,
+				// 	},
+				// });
+				let data = issuesData.filter((x) => x.issueType === filterIssue);
+				console.log(issuesData.filter((x) => x.issueType === filterIssue));
+				// setFilteredIssues(
+				// 	issuesData.filter((x) => x.issueType === filterIssue)
+				// );
 				setFilteredIssues(data);
-				console.log(data);
+				// console.log(data);
 				let pages = Math.floor(Number(data.length) / 3) + 1;
+				// let pages = 2;
 				console.log(pages);
 				setTotalPages(pages === 0 ? 1 : pages);
 
@@ -68,7 +74,7 @@ function MapComponent() {
 		if (filterIssue) {
 			fetchData();
 		}
-	}, [filterIssue]);
+	}, [filterIssue, issuesData]);
 
 	const handleListItemClick = (event, index) => {
 		setSelectedIndex(index);
@@ -217,7 +223,12 @@ function MapComponent() {
 				Current Issues
 			</h3> */}
 			<Typography
-				style={{ textAlign: "center", justifyContent: "center" }}
+				style={{
+					textAlign: "center",
+					justifyContent: "center",
+					paddingTop: "10px",
+					height: "70px",
+				}}
 				variant="h4"
 				component="h1"
 			>
@@ -235,26 +246,34 @@ function MapComponent() {
 						{markerList}
 					</GoogleMap>
 					<div className="issue-container">
-						<Filter setFilter={setFilter} filteredIssue={filterIssue} />
-						<List sx={{ width: "100%", bgcolor: "background.paper" }}>
-							<Divider variant="insert" component="li" />
-							{issuesList && issuesList.length > 0 ? (
-								issuesList
-							) : (
-								<div>No events have been reported</div>
-							)}
-							{/* {issuesList} */}
-						</List>
-						<Pagination
-							count={totalPages}
-							page={currentPage}
-							onChange={handlePageChange}
-							defaultPage={1}
-							color="primary"
-							size="large"
-							showFirstButton
-							showLastButton
+						<Filter
+							className="filter-select"
+							setFilter={setFilter}
+							filteredIssue={filterIssue}
 						/>
+						<div className="issue-list">
+							<List sx={{ width: "100%", bgcolor: "background.paper" }}>
+								<Divider variant="insert" component="li" />
+								{issuesList && issuesList.length > 0 ? (
+									issuesList
+								) : (
+									<div>No events have been reported</div>
+								)}
+								{/* {issuesList} */}
+							</List>
+						</div>
+						<div className="pagination-controls">
+							<Pagination
+								count={totalPages}
+								page={currentPage}
+								onChange={handlePageChange}
+								defaultPage={1}
+								color="primary"
+								size="large"
+								showFirstButton
+								showLastButton
+							/>
+						</div>
 					</div>
 				</div>
 			)}

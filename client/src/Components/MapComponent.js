@@ -28,11 +28,12 @@ function MapComponent() {
 	useEffect(() => {
 		async function fetchData() {
 			try {
+				console.log("i ran");
 				setLoading(true);
 				const { data } = await axios.get("/report");
 				setIssuesData(data);
-				console.log(data);
-				let pages = Math.floor(Number(data.length) / 3) + 1;
+				// console.log(data);
+				let pages = Math.ceil(Number(data.length) / 3);
 				setTotalPages(pages === 0 ? 1 : pages);
 
 				setLoading(false);
@@ -47,23 +48,17 @@ function MapComponent() {
 		async function fetchData() {
 			try {
 				setLoading(true);
-				// const { data } = await axios({
-				// 	method: "POST",
-				// 	url: "/report/filter",
-				// 	data: {
-				// 		issueType: filterIssue,
-				// 	},
-				// });
-				let data = issuesData.filter((x) => x.issueType === filterIssue);
-				console.log(issuesData.filter((x) => x.issueType === filterIssue));
-				// setFilteredIssues(
-				// 	issuesData.filter((x) => x.issueType === filterIssue)
-				// );
+				let data;
+				console.log(filterIssue);
+				if (filterIssue === "none") {
+					data = issuesData;
+				} else {
+					data = issuesData.filter((x) => x.issueType === filterIssue);
+				}
+				console.log(data);
+				// let data = issuesData.filter((x) => x.issueType === filterIssue);
 				setFilteredIssues(data);
-				// console.log(data);
-				let pages = Math.floor(Number(data.length) / 3) + 1;
-				// let pages = 2;
-				console.log(pages);
+				let pages = Math.ceil(Number(data.length) / 3);
 				setTotalPages(pages === 0 ? 1 : pages);
 
 				setLoading(false);

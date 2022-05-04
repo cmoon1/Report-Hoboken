@@ -14,7 +14,9 @@ const Filter = (props) => {
 				value={props.filteredIssue}
 				onChange={handleChange}
 			>
-				<MenuItem value="">None</MenuItem>
+				<MenuItem value="none" disabled={!props.filteredIssue}>
+					None
+				</MenuItem>
 				<MenuItem value="nowater">No Water</MenuItem>
 				<MenuItem value="nopower">Power Outage</MenuItem>
 				<MenuItem value="flooding">Flooding</MenuItem>

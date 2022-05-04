@@ -1,26 +1,27 @@
 {
-  "name": "report-hoboken",
-  "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
-  "scripts": {
-    "start": "node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/cmoon1/Report-Hoboken.git"
-  },
-  "author": "Christopher Moon, Ayomide Omokanwaye, Jan Del Rosario, Zane ThummBorst, Cameron Conway",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/cmoon1/Report-Hoboken/issues"
-  },
-  "homepage": "https://github.com/cmoon1/Report-Hoboken#readme",
-  "dependencies": {
-    "dotenv": "^16.0.0",
-    "express": "^4.17.3",
-    "mongodb": "^4.5.0",
-    "node-geocoder": "^4.0.0"
-  }
+	"name": "report-hoboken",
+	"version": "1.0.0",
+	"description": "",
+	"main": "app.js",
+	"scripts": {
+		"start": "node app.js",
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"seed": "node ./tasks/seed.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/cmoon1/Report-Hoboken.git"
+	},
+	"author": "Christopher Moon, Ayomide Omokanwaye, Jan Del Rosario, Zane ThummBorst, Cameron Conway",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/cmoon1/Report-Hoboken/issues"
+	},
+	"homepage": "https://github.com/cmoon1/Report-Hoboken#readme",
+	"dependencies": {
+		"dotenv": "^16.0.0",
+		"express": "^4.17.3",
+		"mongodb": "^4.5.0",
+		"node-geocoder": "^4.0.0"
+	}
 }

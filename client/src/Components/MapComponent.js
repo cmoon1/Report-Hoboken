@@ -9,6 +9,8 @@ import {
 	ListItemButton,
 	Pagination,
 	CircularProgress,
+	ListItemAvatar,
+	Avatar,
 } from "@mui/material";
 import Filter from "./Filter";
 import axios from "axios";
@@ -25,10 +27,19 @@ function MapComponent() {
 	let issuesList = [];
 	let markerList = [];
 
+	const pictures = {
+		nowater: "/imgs/nowater.jpg",
+		nopower: "/imgs/nopower.jpg",
+		flooding: "/imgs/flooding.png",
+		construction: "/imgs/construction.jpg",
+		noise: "/imgs/noise.png",
+		airquality: "/imgs/airquality.jpg",
+		potholes: "/imgs/potholes.jpg",
+	};
+
 	useEffect(() => {
 		async function fetchData() {
 			try {
-				console.log("i ran");
 				setLoading(true);
 				const { data } = await axios.get("/report");
 				setIssuesData(data);
@@ -93,6 +104,9 @@ function MapComponent() {
 		return (
 			<div key={index}>
 				<ListItem alignItems="flex-start">
+					<ListItemAvatar>
+						<Avatar alt="nowater" src={pictures[issue.issueType]} />
+					</ListItemAvatar>
 					<ListItemButton
 						selected={selectedIndex === index}
 						onClick={(event) => handleListItemClick(event, index)}

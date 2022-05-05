@@ -28,7 +28,6 @@ router.post("/filter", async (req, res) => {
 
 router.post("/", async (req, res) => {
 	let reportInfo = req.body;
-	console.log(reportInfo);
 	if (!reportInfo) {
 		res.status(400).json({ error: "Data needs to be provided!" });
 		return;

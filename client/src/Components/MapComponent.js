@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GoogleMap, Marker, InfoWindow } from "@react-google-maps/api";
 import {
 	Typography,
@@ -8,71 +8,79 @@ import {
 	Divider,
 	ListItemButton,
 	Pagination,
+	CircularProgress,
+	ListItemAvatar,
+	Avatar,
 } from "@mui/material";
+import Filter from "./Filter";
+import axios from "axios";
 function MapComponent() {
 	const [center, setCenter] = useState({ lat: 40.744, lng: -74.0324 });
 	const [currentPage, setCurrentPage] = useState(1);
 	const [totalPages, setTotalPages] = useState(3);
 	const [activeMarker, setActiveMarker] = useState(null);
 	const [selectedIndex, setSelectedIndex] = useState(null);
-	// sample data for now
-	const [issuesData, setIssuesData] = useState([
-		{
-			title: "Water issue",
-			location: "Reported at 123 Road",
-			coords: { lat: 40.744, lng: -74.0324 },
-			name: "Bobby Jones",
-		},
-		{
-			title: "Power issue",
-			location: "Reported at 1000 Ave",
-			coords: { lat: 40.744838, lng: -74.025683 },
-			name: "Billy Bob",
-		},
-		{
-			title: "Air Quality",
-			location: "Reported at 100 Ave",
-			coords: { lat: 40.7445, lng: -74.0324 },
-			name: "Chris Moon",
-		},
-		{
-			title: "Potholes",
-			location: "Reported at 235 Road",
-			coords: { lat: 40.7442, lng: -74.026 },
-			name: "David Smith",
-		},
-		{
-			title: "Power issue",
-			location: "Reported at somewhere",
-			coords: { lat: 40.746, lng: -74.03 },
-			name: "John Smith",
-		},
-		{
-			title: "Noise issue",
-			location: "Reported at Stevens",
-			coords: { lat: 40.7433, lng: -74.0266 },
-			name: "Anonymous",
-		},
-		{
-			title: "Construction",
-			location: "Reported at 1 Ave",
-			coords: { lat: 40.742, lng: -74.031 },
-			name: "Bobby Jones",
-		},
-		{
-			title: "Police Activity",
-			location: "Reported at 101 Street",
-			coords: { lat: 40.745, lng: -74.026 },
-			name: "Billy Bob",
-		},
-		{
-			title: "Power issue",
-			location: "Reported at 1000 Ave",
-			coords: { lat: 40.75, lng: -74.028 },
-			name: "Billy Jones",
-		},
-	]);
+	const [filterIssue, setFilterIssue] = useState("");
+	const [issuesData, setIssuesData] = useState(undefined);
+	const [filteredIssues, setFilteredIssues] = useState(undefined);
+	const [loading, setLoading] = useState(false);
 	let issuesList = [];
+	let markerList = [];
+
+	const pictures = {
+		nowater: "/imgs/nowater.jpg",
+		nopower: "/imgs/nopower.jpg",
+		flooding: "/imgs/flooding.png",
+		construction: "/imgs/construction.jpg",
+		noise: "/imgs/noise.png",
+		airquality: "/imgs/airquality.jpg",
+		potholes: "/imgs/potholes.jpg",
+	};
+
+	useEffect(() => {
+		async function fetchData() {
+			try {
+				setLoading(true);
+				const { data } = await axios.get("/report");
+				setIssuesData(data);
+				// console.log(data);
+				let pages = Math.ceil(Number(data.length) / 3);
+				setTotalPages(pages === 0 ? 1 : pages);
+
+				setLoading(false);
+			} catch (e) {
+				console.log(e);
+			}
+		}
+		fetchData();
+	}, []);
+
+	useEffect(() => {
+		async function fetchData() {
+			try {
+				setLoading(true);
+				let data;
+				console.log(filterIssue);
+				if (filterIssue === "none") {
+					data = issuesData;
+				} else {
+					data = issuesData.filter((x) => x.issueType === filterIssue);
+				}
+				console.log(data);
+				// let data = issuesData.filter((x) => x.issueType === filterIssue);
+				setFilteredIssues(data);
+				let pages = Math.ceil(Number(data.length) / 3);
+				setTotalPages(pages === 0 ? 1 : pages);
+
+				setLoading(false);
+			} catch (e) {
+				console.log(e);
+			}
+		}
+		if (filterIssue) {
+			fetchData();
+		}
+	}, [filterIssue, issuesData]);
 
 	const handleListItemClick = (event, index) => {
 		setSelectedIndex(index);
@@ -96,12 +104,15 @@ function MapComponent() {
 		return (
 			<div key={index}>
 				<ListItem alignItems="flex-start">
+					<ListItemAvatar>
+						<Avatar alt="nowater" src={pictures[issue.issueType]} />
+					</ListItemAvatar>
 					<ListItemButton
 						selected={selectedIndex === index}
 						onClick={(event) => handleListItemClick(event, index)}
 					>
 						<ListItemText
-							primary={issue.title}
+							primary={issue.description}
 							secondary={
 								<React.Fragment>
 									<Typography
@@ -110,9 +121,10 @@ function MapComponent() {
 										variant="body2"
 										color="text.primary"
 									>
-										{issue.name}
+										Reported by {issue.name} on {issue.date} at {issue.time}
 									</Typography>
-									{" - " + issue.location}
+									<br />
+									{issue.address}
 								</React.Fragment>
 							}
 						/>
@@ -123,74 +135,159 @@ function MapComponent() {
 		);
 	};
 
-	issuesList =
-		issuesData &&
-		issuesData
-			.slice((currentPage - 1) * 3, currentPage * 3)
-			.map((issue, index) => {
-				return buildCards(issue, index);
-			});
+	const setFilter = async (value) => {
+		setFilterIssue(value);
+	};
+
+	if (filterIssue) {
+		issuesList =
+			filteredIssues &&
+			filteredIssues
+				.slice((currentPage - 1) * 3, currentPage * 3)
+				.map((issue, index) => {
+					return buildCards(issue, index);
+				});
+		markerList =
+			filteredIssues &&
+			filteredIssues
+				.slice((currentPage - 1) * 3, currentPage * 3)
+				.map((issue, index) => {
+					return (
+						<div key={index}>
+							<Marker
+								title={issue.description}
+								position={{
+									lat: issue.latitude,
+									lng: issue.longitude,
+								}}
+								onClick={() => handleToggleOpen(index)}
+								animation={window.google.maps.Animation.DROP}
+							/>
+							{activeMarker === index ? (
+								<InfoWindow
+									key={index + issue.description}
+									onCloseClick={handleToggleClose}
+									position={{
+										lat: issue.latitude,
+										lng: issue.longitude,
+									}}
+								>
+									<div>
+										<h2>{issue.description}</h2>
+										<br />
+										<p>{issue.issueType}</p>
+									</div>
+								</InfoWindow>
+							) : null}
+						</div>
+					);
+				});
+	} else {
+		issuesList =
+			issuesData &&
+			issuesData
+				.slice((currentPage - 1) * 3, currentPage * 3)
+				.map((issue, index) => {
+					return buildCards(issue, index);
+				});
+		markerList =
+			issuesData &&
+			issuesData
+				.slice((currentPage - 1) * 3, currentPage * 3)
+				.map((issue, index) => {
+					return (
+						<div key={index}>
+							<Marker
+								title={issue.description}
+								position={{
+									lat: issue.latitude,
+									lng: issue.longitude,
+								}}
+								onClick={() => handleToggleOpen(index)}
+								animation={window.google.maps.Animation.DROP}
+							/>
+							{activeMarker === index ? (
+								<InfoWindow
+									key={index + issue.description}
+									onCloseClick={handleToggleClose}
+									position={{
+										lat: issue.latitude,
+										lng: issue.longitude,
+									}}
+								>
+									<div>
+										<h2>{issue.description}</h2>
+										<br />
+										<p>{issue.issueType}</p>
+									</div>
+								</InfoWindow>
+							) : null}
+						</div>
+					);
+				});
+	}
 
 	return (
-		<div style={{ display: "flex" }}>
-			<GoogleMap
-				zoom={15}
-				center={center}
-				mapContainerClassName="map-container"
+		<div style={{ margin: "auto" }}>
+			{/* <h3 style={{ textAlign: "center", justifyContent: "center" }}>
+				Current Issues
+			</h3> */}
+			<Typography
+				style={{
+					textAlign: "center",
+					justifyContent: "center",
+					paddingTop: "10px",
+					height: "70px",
+				}}
+				variant="h4"
+				component="h1"
 			>
-				{issuesData &&
-					issuesData
-						.slice((currentPage - 1) * 3, currentPage * 3)
-						.map((issue, index) => {
-							return (
-								<div key={index}>
-									<Marker
-										title={issue.title}
-										position={{ lat: issue.coords.lat, lng: issue.coords.lng }}
-										onClick={() => handleToggleOpen(index)}
-										animation={window.google.maps.Animation.DROP}
-									/>
-									{activeMarker === index ? (
-										<InfoWindow
-											key={index + issue.title}
-											onCloseClick={handleToggleClose}
-											position={{
-												lat: issue.coords.lat,
-												lng: issue.coords.lng,
-											}}
-										>
-											<div>
-												<h2>{issue.title}</h2>
-												<br />
-												<p>{issue.location}</p>
-											</div>
-										</InfoWindow>
-									) : null}
-								</div>
-							);
-						})}
-			</GoogleMap>
-			{/* <div className="map-container"></div> */}
-
-			<div className="issue-container">
-				<h1 style={{ textAlign: "center", justifyContent: "center" }}>
-					Current Issues
-				</h1>
-				<List sx={{ width: "100%", bgcolor: "background.paper" }}>
-					<Divider variant="insert" component="li" />
-					{issuesList}
-				</List>
-				<Pagination
-					count={totalPages}
-					page={currentPage}
-					onChange={handlePageChange}
-					defaultPage={1}
-					color="primary"
-					size="large"
-					showFirstButton
-					showLastButton
-				/>
-			</div>
+				Current Issues
+			</Typography>
+			{loading ? (
+				<CircularProgress />
+			) : (
+				<div style={{ display: "flex" }}>
+					<GoogleMap
+						zoom={15}
+						center={center}
+						mapContainerClassName="map-container"
+					>
+						{markerList}
+					</GoogleMap>
+					<div className="issue-container">
+						<Filter
+							className="filter-select"
+							setFilter={setFilter}
+							filteredIssue={filterIssue}
+						/>
+						<div className="issue-list">
+							<List sx={{ width: "100%", bgcolor: "background.paper" }}>
+								<Divider variant="insert" component="li" />
+								{issuesList && issuesList.length > 0 ? (
+									issuesList
+								) : (
+									<ListItem>
+										<ListItemText primary={"No issues have been reported."} />
+									</ListItem>
+								)}
+							</List>
+						</div>
+						<div className="pagination-controls">
+							<Pagination
+								count={totalPages}
+								page={currentPage}
+								onChange={handlePageChange}
+								defaultPage={1}
+								color="primary"
+								size="large"
+								showFirstButton
+								showLastButton
+							/>
+						</div>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }

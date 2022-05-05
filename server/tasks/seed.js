@@ -160,7 +160,7 @@ async function main() {
 	const report10 = {
 		name: "Zane Thummborst",
 		date: paddedDate,
-		address: "400 Newark Street Street, Hoboken, NJ, USA",
+		address: "400 Newark Street, Hoboken, NJ, USA",
 		issueType: "airquality",
 		description: "The area has bad air quality",
 	};

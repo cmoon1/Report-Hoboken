@@ -19,6 +19,7 @@ async function main() {
 		address: "123 Washington Street, Hoboken, NJ, USA",
 		issueType: "nowater",
 		description: "There is no water",
+		email: "test1@gmail.com",
 	};
 
 	const newReport1 = await reports.createReport(
@@ -26,7 +27,8 @@ async function main() {
 		report1.date,
 		report1.address,
 		report1.issueType,
-		report1.description
+		report1.description,
+		report1.email
 	);
 
 	const report2 = {
@@ -35,6 +37,7 @@ async function main() {
 		address: "456 Washington Street, Hoboken, NJ, USA",
 		issueType: "nopower",
 		description: "There is no power",
+		email: "test1@gmail.com",
 	};
 
 	const newReport2 = await reports.createReport(
@@ -42,7 +45,8 @@ async function main() {
 		report2.date,
 		report2.address,
 		report2.issueType,
-		report2.description
+		report2.description,
+		report2.email
 	);
 
 	const report3 = {
@@ -51,6 +55,7 @@ async function main() {
 		address: "1 Castle Point Terrace, Hoboken, NJ, USA",
 		issueType: "noise",
 		description: "There is lots of noise",
+		email: "test1@gmail.com",
 	};
 
 	const newReport3 = await reports.createReport(
@@ -58,7 +63,8 @@ async function main() {
 		report3.date,
 		report3.address,
 		report3.issueType,
-		report3.description
+		report3.description,
+		report3.email
 	);
 
 	const report4 = {
@@ -67,6 +73,7 @@ async function main() {
 		address: "900 Madison Street, Hoboken, NJ, USA",
 		issueType: "flooding",
 		description: "The area is flooded",
+		email: "test1@gmail.com",
 	};
 
 	const newReport4 = await reports.createReport(
@@ -74,7 +81,8 @@ async function main() {
 		report4.date,
 		report4.address,
 		report4.issueType,
-		report4.description
+		report4.description,
+		report4.email
 	);
 
 	const report5 = {
@@ -83,6 +91,7 @@ async function main() {
 		address: "422 Monroe Street, Hoboken, NJ, USA",
 		issueType: "airquality",
 		description: "The area has bad air quality",
+		email: "test1@gmail.com",
 	};
 
 	const newReport5 = await reports.createReport(
@@ -90,7 +99,8 @@ async function main() {
 		report5.date,
 		report5.address,
 		report5.issueType,
-		report5.description
+		report5.description,
+		report5.email
 	);
 
 	const report6 = {
@@ -99,6 +109,7 @@ async function main() {
 		address: "1422 Grand Street, Hoboken, NJ, USA",
 		issueType: "nowater",
 		description: "There is no water",
+		email: "test1@gmail.com",
 	};
 
 	const newReport6 = await reports.createReport(
@@ -106,7 +117,8 @@ async function main() {
 		report6.date,
 		report6.address,
 		report6.issueType,
-		report6.description
+		report6.description,
+		report6.email
 	);
 
 	const report7 = {
@@ -115,6 +127,7 @@ async function main() {
 		address: "1420 Sinatra Dr N, Hoboken, NJ, USA",
 		issueType: "nopower",
 		description: "There is no power",
+		email: "test1@gmail.com",
 	};
 
 	const newReport7 = await reports.createReport(
@@ -122,7 +135,8 @@ async function main() {
 		report7.date,
 		report7.address,
 		report7.issueType,
-		report7.description
+		report7.description,
+		report7.email
 	);
 
 	const report8 = {
@@ -131,6 +145,7 @@ async function main() {
 		address: "770 Jackson Street, Hoboken, NJ, USA",
 		issueType: "noise",
 		description: "There is lots of noise",
+		email: "test1@gmail.com",
 	};
 
 	const newReport8 = await reports.createReport(
@@ -138,7 +153,8 @@ async function main() {
 		report8.date,
 		report8.address,
 		report8.issueType,
-		report8.description
+		report8.description,
+		report8.email
 	);
 
 	const report9 = {
@@ -147,6 +163,7 @@ async function main() {
 		address: "700 1st Street, Hoboken, NJ, USA",
 		issueType: "flooding",
 		description: "The area is flooded",
+		email: "test1@gmail.com",
 	};
 
 	const newReport9 = await reports.createReport(
@@ -154,7 +171,8 @@ async function main() {
 		report9.date,
 		report9.address,
 		report9.issueType,
-		report9.description
+		report9.description,
+		report9.email
 	);
 
 	const report10 = {
@@ -163,6 +181,7 @@ async function main() {
 		address: "400 Newark Street, Hoboken, NJ, USA",
 		issueType: "airquality",
 		description: "The area has bad air quality",
+		email: "test1@gmail.com",
 	};
 
 	const newReport10 = await reports.createReport(
@@ -170,7 +189,8 @@ async function main() {
 		report10.date,
 		report10.address,
 		report10.issueType,
-		report10.description
+		report10.description,
+		report10.email
 	);
 
 	const report11 = {
@@ -179,6 +199,7 @@ async function main() {
 		address: "308 Willow Ave, Hoboken, NJ, USA",
 		issueType: "construction",
 		description: "There is construction going on",
+		email: "test1@gmail.com",
 	};
 
 	const newReport11 = await reports.createReport(
@@ -186,7 +207,8 @@ async function main() {
 		report11.date,
 		report11.address,
 		report11.issueType,
-		report11.description
+		report11.description,
+		report11.email
 	);
 
 	const report12 = {
@@ -195,6 +217,7 @@ async function main() {
 		address: "309 1st Street, Hoboken, NJ, USA",
 		issueType: "construction",
 		description: "There is construction going on",
+		email: "test1@gmail.com",
 	};
 
 	const newReport12 = await reports.createReport(
@@ -202,7 +225,8 @@ async function main() {
 		report12.date,
 		report12.address,
 		report12.issueType,
-		report12.description
+		report12.description,
+		report12.email
 	);
 
 	const report13 = {
@@ -211,6 +235,7 @@ async function main() {
 		address: "59 Washington Street, Hoboken, NJ, USA",
 		issueType: "potholes",
 		description: "There are potholes on the road",
+		email: "test1@gmail.com",
 	};
 
 	const newReport13 = await reports.createReport(
@@ -218,7 +243,8 @@ async function main() {
 		report13.date,
 		report13.address,
 		report13.issueType,
-		report13.description
+		report13.description,
+		report13.email
 	);
 
 	const report14 = {
@@ -227,6 +253,7 @@ async function main() {
 		address: "213 Bloomfield Street, Hoboken, NJ, USA",
 		issueType: "potholes",
 		description: "There are potholes",
+		email: "test1@gmail.com",
 	};
 
 	const newReport14 = await reports.createReport(
@@ -234,7 +261,8 @@ async function main() {
 		report14.date,
 		report14.address,
 		report14.issueType,
-		report14.description
+		report14.description,
+		report14.email
 	);
 
 	const report15 = {
@@ -243,6 +271,7 @@ async function main() {
 		address: "704 Jefferson Street, Hoboken, NJ, USA",
 		issueType: "nowater",
 		description: "The area no water",
+		email: "test1@gmail.com",
 	};
 
 	const newReport15 = await reports.createReport(
@@ -250,7 +279,8 @@ async function main() {
 		report15.date,
 		report15.address,
 		report15.issueType,
-		report15.description
+		report15.description,
+		report15.email
 	);
 
 	console.log("Done seeding datebase");

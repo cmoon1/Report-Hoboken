@@ -266,9 +266,10 @@ function MapComponent() {
 								{issuesList && issuesList.length > 0 ? (
 									issuesList
 								) : (
-									<div>No events have been reported</div>
+									<ListItem>
+										<ListItemText primary={"No issues have been reported."} />
+									</ListItem>
 								)}
-								{/* {issuesList} */}
 							</List>
 						</div>
 						<div className="pagination-controls">

@@ -39,7 +39,8 @@ router.post("/", async (req, res) => {
 		!formData.date ||
 		!reportInfo.address ||
 		!formData.issueType ||
-		!formData.description
+		!formData.description ||
+		!formData.email
 	) {
 		res.status(400).json({ error: "Not all data is provided!" });
 		return;
@@ -50,7 +51,8 @@ router.post("/", async (req, res) => {
 		typeof formData.date !== "string" ||
 		typeof reportInfo.address !== "string" ||
 		typeof formData.issueType !== "string" ||
-		typeof formData.description !== "string"
+		typeof formData.description !== "string" ||
+		typeof formData.email !== "string"
 	) {
 		res.status(400).json({ error: "Data given is not of proper type!" });
 		return;
@@ -62,7 +64,8 @@ router.post("/", async (req, res) => {
 			formData.date,
 			reportInfo.address,
 			formData.issueType,
-			formData.description
+			formData.description,
+			formData.email
 		);
 		res.status(200).json(newReport);
 	} catch (e) {

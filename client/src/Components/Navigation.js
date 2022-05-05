@@ -56,7 +56,11 @@ const Navigation = () => {
 							>
 								<Tab label={"Home"} component={Link} to="/" />
 								<Tab label={"Report an Issue"} component={Link} to="/report" />
-								<Tab label={"Map"} component={Link} to="/map" />
+								<Tab
+									label={"Map of Current Issues"}
+									component={Link}
+									to="/map"
+								/>
 							</Tabs>
 						</Grid>
 					</Grid>

@@ -21,6 +21,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import throttle from "lodash/throttle";
 import parse from "autosuggest-highlight/parse";
 import axios from "axios";
+import FormModal from "./FormModal";
 function loadScript(src, position, id) {
 	if (!position) {
 		return;
@@ -61,7 +62,10 @@ function ReportForm() {
 	const [descriptionError, setDescriptionError] = useState(false);
 	const [descriptionErrorMessage, setDescriptionErrorMessage] = useState(" ");
 	const [error, setError] = useState(false);
-	const [status, setStatus] = useState(false);
+
+	// Modal states
+	const [returnData, setReturnData] = useState(undefined);
+	const [showModal, setShowModal] = useState(false);
 
 	// Autocomplete states
 	const [value, setValue] = useState(null);
@@ -134,6 +138,10 @@ function ReportForm() {
 
 	const handleChange = (e) => {
 		setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+	};
+
+	const handleCloseModal = () => {
+		setShowModal(false);
 	};
 
 	const handleReport = async (e) => {
@@ -224,7 +232,9 @@ function ReportForm() {
 			if (!data) {
 				throw new Error("Could not make report");
 			}
-			setStatus(true);
+			console.log(data);
+			setReturnData(data);
+			setShowModal(true);
 			setLoading(false);
 		} catch (error) {
 			console.log(error);
@@ -234,29 +244,6 @@ function ReportForm() {
 	};
 	return (
 		<Container component="main" maxWidth="xs">
-			{status ? (
-				<Collapse in={status}>
-					<Alert
-						severity="success"
-						action={
-							<IconButton
-								aria-label="close"
-								color="inherit"
-								size="smalll"
-								onClick={() => {
-									setStatus(false);
-								}}
-							>
-								<CloseIcon fontSize="inherit" />
-							</IconButton>
-						}
-					>
-						Your report has been successfully submitted.
-					</Alert>
-				</Collapse>
-			) : (
-				<div></div>
-			)}
 			{error ? (
 				<Collapse in={error}>
 					<Alert
@@ -281,6 +268,14 @@ function ReportForm() {
 				<div></div>
 			)}
 			<br />
+			{returnData ? (
+				<FormModal
+					show={showModal}
+					onHide={handleCloseModal}
+					report={returnData}
+				/>
+			) : null}
+
 			<Typography component="h1" variant="h5">
 				Make a Report
 			</Typography>
@@ -427,11 +422,10 @@ function ReportForm() {
 							helperText={descriptionErrorMessage}
 							onChange={(e) => handleChange(e)}
 							multiline
-							rows={2}
+							rows={1}
 							variant="standard"
 						/>
 					</Grid>
-
 					<Grid item xs={12}>
 						<Button
 							type="submit"

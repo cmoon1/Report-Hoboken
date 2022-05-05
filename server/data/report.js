@@ -74,6 +74,7 @@ let createReport = async (
 		address: address,
 		issueType: issueType.trim(),
 		description: description.trim(),
+		time: new Date().toLocaleTimeString(),
 	};
 
 	const insertReport = await reportCollection.insertOne(newReport);

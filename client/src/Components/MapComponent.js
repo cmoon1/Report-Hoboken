@@ -121,9 +121,10 @@ function MapComponent() {
 										variant="body2"
 										color="text.primary"
 									>
-										Reported by {issue.name} on {issue.date}
+										Reported by {issue.name} on {issue.date} at {issue.time}
 									</Typography>
-									{" - " + issue.address}
+									<br />
+									{issue.address}
 								</React.Fragment>
 							}
 						/>

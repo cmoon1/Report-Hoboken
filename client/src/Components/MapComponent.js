@@ -121,9 +121,10 @@ function MapComponent() {
 										variant="body2"
 										color="text.primary"
 									>
-										Reported by {issue.name} on {issue.date}
+										Reported by {issue.name} on {issue.date} at {issue.time}
 									</Typography>
-									{" - " + issue.address}
+									<br />
+									{issue.address}
 								</React.Fragment>
 							}
 						/>
@@ -266,9 +267,10 @@ function MapComponent() {
 								{issuesList && issuesList.length > 0 ? (
 									issuesList
 								) : (
-									<div>No events have been reported</div>
+									<ListItem>
+										<ListItemText primary={"No issues have been reported."} />
+									</ListItem>
 								)}
-								{/* {issuesList} */}
 							</List>
 						</div>
 						<div className="pagination-controls">

@@ -30,8 +30,15 @@ let validDate = (date) => {
 
 //        !!! might need further error checking for address (make sure it is in Hoboken) !!!
 
-let createReport = async (name, date, address, issueType, description) => {
-	if (!name || !date || !address || !issueType || !description)
+let createReport = async (
+	name,
+	date,
+	address,
+	issueType,
+	description,
+	email
+) => {
+	if (!name || !date || !address || !issueType || !description || !email)
 		throw "missing fields!";
 
 	if (
@@ -39,7 +46,8 @@ let createReport = async (name, date, address, issueType, description) => {
 		!validString(date) ||
 		!validString(address) ||
 		!validString(issueType) ||
-		!validString(description)
+		!validString(description) ||
+		!validString(email)
 	)
 		throw "invalid string inputs";
 
@@ -60,11 +68,13 @@ let createReport = async (name, date, address, issueType, description) => {
 	let newReport = {
 		name: name.trim(),
 		date: date.trim(),
+		email: email,
 		latitude: retVal[0].latitude,
 		longitude: retVal[0].longitude,
 		address: address,
 		issueType: issueType.trim(),
 		description: description.trim(),
+		time: new Date().toLocaleTimeString(),
 	};
 
 	const insertReport = await reportCollection.insertOne(newReport);
